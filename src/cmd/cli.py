@@ -21,11 +21,36 @@ cli >
 """
 
 import logging
+from pathlib import Path
 
-main_logger = logging.getLogger()
-main_logger.setLevel(logging_level)
+CMD_DIR = Path(__file__).parent
+LOG_FILE = CMD_DIR / "logs.txt"
 
-# Set up a stream handler to log to the consolestream_handler = logging.StreamHandler()
-stream_handler.setLevel(logging_level)
-formatter = logging.Formatter("%(name)s - %(levelname)s - %(message)s")
-stream_handler.setFormatter(formatter)
+lgr = logging.getLogger(__name__)
+
+# create handlers and set their levels
+console_handler = logging.StreamHandler()
+file_handler = logging.FileHandler()
+console_handler.setLevel(logging.DEBUG)
+file_handler.setLevel(logging.INFO)
+
+# create formatters for handlers
+c_format = logging.Formatter("%(name)s - %(levelname)s - %(message)s")
+f_format = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+console_handler.setFormatter(c_format)
+file_handler.setFormatter(f_format)
+
+# add the handlers to the logger
+lgr.addHandler(console_handler)
+lgr.addHandler(file_handler)
+
+lgr.debug("Logger successfully created.")
+
+
+
+def main():
+    pass
+
+
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,10 @@
+{
+    "items": {
+        "apple": {
+            "stock": [{
+                "price": 5.43,
+                "in_stock": 12
+            }]
+        }
+    }
+}

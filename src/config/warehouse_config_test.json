@@ -1,0 +1,4 @@
+{
+    "test_mode": true,
+    "warehouse_file": "warehouse_test.json"
+}

@@ -12,10 +12,12 @@ $ python cli.py (-h) (-help) (--help)           # with or without the switch it 
 $ python cli.py shop status                     # the status of every item in the shop
 $ python cli.py shop status apple               # the status of apple in the shop
 $ python cli.py shop estimate apple 12          # estimate the cost of 12 apples in the shop
+$ python cli.py shop buy apple 12               # buy 12 apples from the shop
 
 $ python cli.py warehouse status                # the status of every item in the warehouse
 $ python cli.py warehouse status apple          # the status of apple in the warehouse
-$ python cli.py warehouse estimate apple 12     # the status of apple in the warehouse
+$ python cli.py warehouse estimate apple 12     # estimate the cost of 12 apples in the warehouse
+$ python cli.py warehouse buy apple 12          # buy 12 apples from the warehouse
 
 # The above commands do not require the REST servers to be run, it will operate directly
 # on the warehouse.json file.
@@ -34,7 +36,6 @@ $ python cli.py warehouse add -product apple -quantity 12 -price 0.5
 $ python cli.py config  # configure the project with this CLI tool 
                        <shop/warehouse> --listen-addr 127.0.0.1:8080
                        # address on which <shop/warehouse> REST server will be listening
-
 
 ```
 
