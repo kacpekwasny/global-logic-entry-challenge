@@ -12,14 +12,43 @@ $ python cli.py warehouse status                # the status of every item in th
 $ python cli.py warehouse status apple          # the status of apple in the warehouse
 $ python cli.py warehouse estimate apple 12     # the status of apple in the warehouse
 
-# The above command do not require the REST servers to be run, cli.py imports Shop and Warehouse 
+# The above commands do not require the REST servers to be run, it will operate directly
+# on the warehouse.json file.
+
 
 # On the other hand the below command sends requests and to the rest servers
 # It takes config from cli_config.json
-$ python cli.py -rest ...     # run any command by using REST
+$ python cli.py -rest ...     # run any from the above commands by using REST
 
-$ python cli.py -config       # the status of apple in the warehouse
 
+# This command does NOT work with REST  
+$ python cli.py warehouse add -product apple -quantity 12 -price 0.5    # add product to the warehouse with the specified code, in the quantity, and with the price
+
+
+$ python cli.py config       # configure the project with this CLI tool
+                        <shop/warehouse> --listen-addr 127.0.0.1:8080       # address on which the <shop/warehouse> REST server will be listening
+```
+
+
+
+### Files
+
+```yaml
+
+src/
+    cmd/
+        - 
+    config/
+    shop/
+    warehouse/
+        - warehouse.py
+                # warehouse logic, it will get its configuration from src/config/warehouse_config(_test).json
+
+        - warehouse.json
+                # This file will have the contents of the warehouse persisted
+
+        - warehouse_test.json
+                # This file will be used for testing the project, and its contents will be constantly reset every test
 
 ```
 
