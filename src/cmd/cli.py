@@ -19,3 +19,13 @@ cli.py      # run with no arguments
             # You will be prompted to the cli and from there you will be able to 
 cli >
 """
+
+import logging
+
+main_logger = logging.getLogger()
+main_logger.setLevel(logging_level)
+
+# Set up a stream handler to log to the consolestream_handler = logging.StreamHandler()
+stream_handler.setLevel(logging_level)
+formatter = logging.Formatter("%(name)s - %(levelname)s - %(message)s")
+stream_handler.setFormatter(formatter)

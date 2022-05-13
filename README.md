@@ -1,9 +1,14 @@
 # GLOBAL-LOGIC-ENTRY-CHALLENGE
 
+*python 3.10.1*
+
 ## Example usage
 
 ```bash
 $ cd src/cmd
+$ python cli.py (-h) (-help) (--help)           # with or without the switch it will display the below 
+                                                # shown instructions
+
 $ python cli.py shop status                     # the status of every item in the shop
 $ python cli.py shop status apple               # the status of apple in the shop
 $ python cli.py shop estimate apple 12          # estimate the cost of 12 apples in the shop
@@ -22,11 +27,15 @@ $ python cli.py -rest ...     # run any from the above commands by using REST
 
 
 # This command does NOT work with REST  
-$ python cli.py warehouse add -product apple -quantity 12 -price 0.5    # add product to the warehouse with the specified code, in the quantity, and with the price
+$ python cli.py warehouse add -product apple -quantity 12 -price 0.5
+        # add product to the warehouse with the specified code, in the quantity, and with the price
 
 
-$ python cli.py config       # configure the project with this CLI tool
-                        <shop/warehouse> --listen-addr 127.0.0.1:8080       # address on which the <shop/warehouse> REST server will be listening
+$ python cli.py config  # configure the project with this CLI tool 
+                       <shop/warehouse> --listen-addr 127.0.0.1:8080
+                       # address on which <shop/warehouse> REST server will be listening
+
+
 ```
 
 
@@ -37,7 +46,8 @@ $ python cli.py config       # configure the project with this CLI tool
 
 src/
     cmd/
-        - 
+        - cli.py
+                # the command line interface
     config/
     shop/
     warehouse/
