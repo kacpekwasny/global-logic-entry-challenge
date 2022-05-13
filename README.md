@@ -12,12 +12,15 @@ $ python cli.py warehouse status                # the status of every item in th
 $ python cli.py warehouse status apple          # the status of apple in the warehouse
 $ python cli.py warehouse estimate apple 12     # the status of apple in the warehouse
 
+# The above command do not require the REST servers to be run, cli.py imports Shop and Warehouse 
+
+# On the other hand the below command sends requests and to the rest servers
+# It takes config from cli_config.json
 $ python cli.py -rest ...     # run any command by using REST
 
 $ python cli.py -config       # the status of apple in the warehouse
 
 
-# The above command do not require the REST servers to be run, cli.py imports required functions and does
 ```
 
 
