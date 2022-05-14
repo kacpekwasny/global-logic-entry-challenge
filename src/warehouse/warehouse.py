@@ -9,12 +9,13 @@ from typing import IO
 
 WAREHOUSE_DIR = pathlib.Path(__file__).parent
 CONFIG_DIR = WAREHOUSE_DIR / ".." / "config"
-lgr = logging.getLogger(__name__)
+lgr = logging.getLogger("global-logic")
 
 class Warehouse:
 
     def __init__(self, *, config_file_name="warehouse_config.json") -> None:
-        self.config_file_name: str = config_file_name    # this will change on which database it will be operating
+        # this will change on which database it will be operating
+        self.config_file_name: str = config_file_name
         self.config: dict[str, bool | str | float | dict] = {}
         self.warehouse = {}
         self.items: dict[str, dict[str, list[dict]]] = {}
@@ -23,6 +24,7 @@ class Warehouse:
         self.load_data()
 
         self.warehouse_file: IO
+        self.open_warehouse_file()
 
     def load_config(self):
         """load config from src/config/{config_file}.json, parse it and set to self.config"""
@@ -46,10 +48,10 @@ class Warehouse:
                 exit()
 
     def load_data(self):
-        file_path = WAREHOUSE_DIR / self.config["warehouse.json"]
+        file_path = WAREHOUSE_DIR / self.config["warehouse_file"]
         error = True
         try:
-            with open(file_path, "rw", encoding="utf-8") as f:
+            with open(file_path, "r", encoding="utf-8") as f:
                 self.warehouse = loads(f.read())
             self.items = self.warehouse["items"]
             error = False
@@ -92,16 +94,16 @@ class Warehouse:
             lgr.critical("Error while saving the warehouse")
             lgr.debug(e)
 
+    def listen_and_serve(self):
+        """
+        Listen for http
+        """
+
     def close(self) -> None:
         """
         turn off the HTTP server and close the file
         """
         self.warehouse_file.close()
-
-    def listen_and_serve(self):
-        """
-        Listen for http
-        """
 
     # ~~~~~~~~~ API ~~~~~~~~~ #
     def get_status(self) -> dict:
@@ -151,7 +153,7 @@ class Warehouse:
         if price == -1:
             # not enough of the item to buy
             return -1
-        
+
         # enough of the item
         stock = self.items[item]["stock"]
         while qty > 0:
@@ -173,9 +175,14 @@ class Warehouse:
         """
         add product to warehouse
         """
-        self.items[item]["stock"].append({
+        d = {
             "in_stock": qty,
             "price": price
-        })
+        }
+        if item in self.items:
+            self.items[item]["stock"].append(d)
+        else:
+            self.items[item] = {
+                "stock": [d]
+            }
         self.persist_warehouse()
-
