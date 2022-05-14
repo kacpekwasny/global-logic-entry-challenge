@@ -26,11 +26,11 @@ from pathlib import Path
 CMD_DIR = Path(__file__).parent
 LOG_FILE = CMD_DIR / "logs.txt"
 
-lgr = logging.getLogger(__name__)
+lgr = logging.getLogger("global-logic")
 
 # create handlers and set their levels
 console_handler = logging.StreamHandler()
-file_handler = logging.FileHandler()
+file_handler = logging.FileHandler(str(LOG_FILE.resolve()))
 console_handler.setLevel(logging.DEBUG)
 file_handler.setLevel(logging.INFO)
 
