@@ -26,6 +26,7 @@ console_handler.setFormatter(c_format)
 lgr.addHandler(console_handler)
 
 lgr.debug("Logger successfully created.")
+lgr.setLevel(logging.DEBUG)
 
 from warehouse.warehouse import Warehouse
 
@@ -59,6 +60,11 @@ warehouse_content = {
     }
 }
 
+warehouse = Warehouse(config_file_name="warehouse_config_test.json")
+warehouse.warehouse = deepcopy(warehouse_content)
+warehouse.persist_warehouse()
+
+exit()
 
 class TestWarehouse(unittest.TestCase):
 

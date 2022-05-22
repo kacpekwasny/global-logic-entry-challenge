@@ -90,7 +90,8 @@ class Warehouse:
             self.warehouse_file.write(dumps(self.warehouse))
             self.warehouse_file.flush()
             os.fsync(self.warehouse_file.fileno())
-        except e:
+            lgr.debug(f"saved to: {self.config.warehouse_file}")
+        except Exception as e:
             lgr.critical("Error while saving the warehouse")
             lgr.debug(e)
 
