@@ -140,6 +140,8 @@ class Warehouse:
             float: price of buying the product in desired quantity
             -1: if there is not enough of the product for the desired quantity
         """
+        if qty < 0:
+            raise ValueError("qty (quantity) cannot be smaller than 0")
         item_stats = self.items.get(item, None)
         if item_stats is None:
             return -1
@@ -164,6 +166,9 @@ class Warehouse:
             float: price of buying the product in the desired quantity
             -1: if there is not enough of the product for the desired quantity (or there is no such product)
         """
+        if qty < 0:
+            raise ValueError("qty (quantity) cannot be smaller than 0")
+
         cost = self.get_estimate(item, qty)
         if cost == -1:
             # not enough of the item to buy
@@ -194,6 +199,12 @@ class Warehouse:
         """
         add product to warehouse
         """
+        if qty < 0:
+            raise ValueError("qty (quantity) cannot be smaller than 0")
+        if price < 0:
+            raise ValueError("price cannot be smaller than 0")
+
+
         d = {
             "in_stock": qty,
             "price": price

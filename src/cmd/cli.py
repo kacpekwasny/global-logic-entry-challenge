@@ -18,14 +18,16 @@ from json import dumps
 from pathlib import Path
 import argparse
 import sys
-import logging
-lgr = logging.getLogger("shoplib")
 
 
 ##### RELATIVE IMPORT SHOPLIB #####
 CMD_DIR = Path(__file__).parent
 sys.path.append((CMD_DIR / "..").resolve().__str__())
 from shoplib.warehouse import Warehouse  # nopep8
+
+import logging  # nopep8
+lgr = logging.getLogger("shoplib")
+lgr.handlers[0].level = logging.INFO # console handler is the first one added in shoplib/__init__.py
 
 
 def make_parser() -> argparse.ArgumentParser:
@@ -74,11 +76,11 @@ def make_parser() -> argparse.ArgumentParser:
 
     ##### add item to warehouse #####
     action_sp: argparse._SubParsersAction = warehouse_p.action_subparser
-    add_p:argparse.ArgumentParser = action_sp.add_parser("add", help="add item to warehouse")
+    add_p: argparse.ArgumentParser = action_sp.add_parser(
+        "add", help="add item to warehouse")
     add_p.add_argument("-product", type=str, help="the product name")
     add_p.add_argument("-qty", type=int, help="the product quantity")
     add_p.add_argument("-price", type=float, help="the product cost per item")
-
 
     return base_parser
 
@@ -109,7 +111,8 @@ def main():
                     qty = args.quantity[0]
                     cost = warehouse.get_estimate(item, qty)
                     if cost == -1:
-                        print(f"There is less than {qty} of the desired item in warehouse.\nUse the `<place> status {item}` command to find out how much there is in warehouse.")
+                        print(
+                            f"There is less than {qty} of the desired item in warehouse.\nUse the `<place> status {item}` command to find out how much there is in warehouse.")
                         return
                     print(cost)
                     print(f"{cost=} of buying {qty} {item}s")
@@ -118,7 +121,8 @@ def main():
                     qty = args.quantity[0]
                     cost = warehouse.buy(item, qty)
                     if cost == -1:
-                        print(f"There is less than {qty} of the desired item in warehouse.\nUse the `<place> status {item}` command to find out how much there is in warehouse.")
+                        print(
+                            f"There is less than {qty} of the desired item in warehouse.\nUse the `<place> status {item}` command to find out how much there is in warehouse.")
                         return
                     print(f"{cost=} of buying  {qty} {item}s")
                 case "add":

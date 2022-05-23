@@ -1,1 +1,1 @@
-{"items": {"apple": {"stock": [{"in_stock": 9, "price": 3.5}]}}}
+{"items": {"apple": {"stock": [{"in_stock": 9, "price": 3.5}]}, "lime": {"stock": [{"in_stock": 38, "price": 5.12}, {"in_stock": 38, "price": -5.12}]}}}

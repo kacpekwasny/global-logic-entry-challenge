@@ -25,7 +25,6 @@ file_handler.setFormatter(f_format)
 lgr.addHandler(console_handler)
 lgr.addHandler(file_handler)
 
-lgr.debug(f"{LGR_NAME=} logger successfully created.")
 
 
 
