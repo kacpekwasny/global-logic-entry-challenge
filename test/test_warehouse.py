@@ -1,19 +1,15 @@
 from copy import deepcopy
 import unittest
-import sys, os
+import sys
 import pathlib
 TEST_DIR = pathlib.Path(__file__).parent
 sys.path.append(str(TEST_DIR / "../src/"))
+from shoplib.warehouse import Warehouse
 
 
 import logging
-from pathlib import Path
-
-CMD_DIR = Path(__file__).parent
-
 lgr = logging.getLogger("shoplib")
 
-from shoplib.warehouse import Warehouse
 
 
 warehouse_content = {
