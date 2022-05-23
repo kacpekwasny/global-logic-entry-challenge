@@ -13,6 +13,7 @@ cli.py
             -w <warehouse address with port>
 """
 
+from audioop import add
 from json import dumps
 from pathlib import Path
 import argparse
@@ -50,6 +51,7 @@ def make_parser() -> argparse.ArgumentParser:
     for parser in [shop_p, warehouse_p]:
         action_sp = parser.add_subparsers(
             help="chose command to be executed by the chosen place.", dest="action")
+        parser.action_subparser = action_sp
         action_sp.required = True
 
         ##### status #####
@@ -68,6 +70,14 @@ def make_parser() -> argparse.ArgumentParser:
             "buy", help="Status displays every items info.")
         buy.add_argument("item", nargs=1)
         buy.add_argument("quantity", nargs=1, type=int)
+
+    ##### add item to warehouse #####
+    action_sp: argparse._SubParsersAction = warehouse_p.action_subparser
+    add_p:argparse.ArgumentParser = action_sp.add_parser("add", help="add item to warehouse")
+    add_p.add_argument("-product", type=str, help="the product name")
+    add_p.add_argument("-qty", type=int, help="the product quantity")
+    add_p.add_argument("-price", type=float, help="the product cost per item")
+
 
     return base_parser
 
@@ -93,7 +103,6 @@ def main():
                     else:
                         status = warehouse.get_status()
                     print(dumps(status, indent=4))
-
                 case "estimate":
                     item = args.item[0]
                     qty = args.quantity[0]
@@ -111,6 +120,10 @@ def main():
                         print(f"There is less than {qty} of the desired item in warehouse.\nUse the `<place> status {item}` command to find out how much there is in warehouse.")
                         return
                     print(f"{cost=} of buying  {qty} {item}s")
+                case "add":
+                    lgr.debug("add item to warehouse")
+                    lgr.debug(f"{args.product=} {args.qty=} {args.price=}")
+                    warehouse.add_product(args.product, args.qty, args.price)
 
 
 if __name__ == "__main__":

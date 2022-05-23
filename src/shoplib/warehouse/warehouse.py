@@ -23,7 +23,6 @@ class Warehouse:
         self.load_config()
         self.load_data()
 
-
     def load_config(self):
         """load config from src/config/{config_file}.json, parse it and set to self.config"""
         file_path = (CONFIG_DIR / self.config_file_name).resolve()
