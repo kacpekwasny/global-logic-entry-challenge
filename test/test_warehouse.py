@@ -10,25 +10,10 @@ import logging
 from pathlib import Path
 
 CMD_DIR = Path(__file__).parent
-LOG_FILE = CMD_DIR / "logs.txt"
 
-lgr = logging.getLogger("global-logic")
+lgr = logging.getLogger("shoplib")
 
-# create handlers and set their levels
-console_handler = logging.StreamHandler()
-console_handler.setLevel(logging.DEBUG)
-
-# create formatters for handlers
-c_format = logging.Formatter("%(name)s - %(levelname)s - %(message)s")
-console_handler.setFormatter(c_format)
-
-# add the handlers to the logger
-lgr.addHandler(console_handler)
-
-lgr.debug("Logger successfully created.")
-lgr.setLevel(logging.DEBUG)
-
-from warehouse.warehouse import Warehouse
+from shoplib.warehouse import Warehouse
 
 
 warehouse_content = {
@@ -60,17 +45,13 @@ warehouse_content = {
     }
 }
 
-warehouse = Warehouse(config_file_name="warehouse_config_test.json")
-warehouse.warehouse = deepcopy(warehouse_content)
-warehouse.persist_warehouse()
-
-exit()
 
 class TestWarehouse(unittest.TestCase):
 
     def setUp(self):
         self.warehouse = Warehouse(config_file_name="warehouse_config_test.json")
         self.warehouse.warehouse = deepcopy(warehouse_content)
+        self.warehouse.items = self.warehouse.warehouse["items"]
         self.warehouse.persist_warehouse()
 
 
@@ -89,7 +70,6 @@ class TestWarehouse(unittest.TestCase):
 
     def test_buy(self):
         self.assertEqual(-1, self.warehouse.buy("1", 3000))
-        
         self.assertEqual(435.46, self.warehouse.buy("1", 30))
         self.assertEqual(282.70000000000005, self.warehouse.buy("2", 72))
 
@@ -141,6 +121,44 @@ class TestWarehouse(unittest.TestCase):
         },
         "lime": {
             "stock": [{
+                "price": 12.20,
+                "in_stock": 10
+            }]
+        }
+    })
+
+        self.warehouse.add_product("lime", 10, 12.20)
+
+        self.assertEqual(self.warehouse.items,  {
+        "1": {
+            "stock": [{
+                "price": 15.43,
+                "in_stock": 22
+            },{
+                "price": 12.00,
+                "in_stock": 12
+            },{
+                "price": 18.00,
+                "in_stock": 30
+            }]
+        },
+        "2": {
+            "stock": [{
+                "price": 1.43,
+                "in_stock": 25
+            },{
+                "price": 5.43,
+                "in_stock": 45
+            },{
+                "price": 1.30,
+                "in_stock": 10
+            }]
+        },
+        "lime": {
+            "stock": [{
+                "price": 12.20,
+                "in_stock": 10
+            }, {
                 "price": 12.20,
                 "in_stock": 10
             }]

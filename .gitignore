@@ -3,3 +3,4 @@ pyvenv
 notes
 logs.txt
 out
+__pycache__

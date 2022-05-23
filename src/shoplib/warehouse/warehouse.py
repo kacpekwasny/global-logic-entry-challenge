@@ -1,5 +1,5 @@
+import sys
 from copy import deepcopy
-from email.policy import default
 from json import dumps, loads, JSONDecodeError
 import logging
 import os
@@ -9,7 +9,7 @@ from typing import IO
 
 WAREHOUSE_DIR = pathlib.Path(__file__).parent
 CONFIG_DIR = WAREHOUSE_DIR / ".." / "config"
-lgr = logging.getLogger("global-logic")
+lgr = logging.getLogger("shoplib")
 
 class Warehouse:
 
@@ -23,8 +23,9 @@ class Warehouse:
         self.load_config()
         self.load_data()
 
-        self.warehouse_file: IO
-        self.open_warehouse_file()
+
+    def __del__(self):
+        self.close()
 
     def load_config(self):
         """load config from src/config/{config_file}.json, parse it and set to self.config"""
@@ -49,19 +50,32 @@ class Warehouse:
 
     def load_data(self):
         file_path = WAREHOUSE_DIR / self.config["warehouse_file"]
+        with open(file_path, "r", encoding="utf-8") as f:
+            content = f.read()
+            if content.strip() != "":
+                try:
+                    self.warehouse = loads(content)
+                except JSONDecodeError as e:
+                    lgr.error("Failed to load warehouse")
+                    lgr.debug(f"{content=}")
+                    self.warehouse = {}
+            else:
+                self.warehouse = {}
+            if "items" not  in self.warehouse:
+                self.warehouse["items"] = {}
+        self.items = self.warehouse["items"]
+        return
+
         error = True
+
+
         try:
-            with open(file_path, "r", encoding="utf-8") as f:
-                self.warehouse = loads(f.read())
-            self.items = self.warehouse["items"]
+            pass
             error = False
         except OSError as e:
             lgr.error(f"Failed to open file: {file_path=}")
             lgr.debug(e)
-        except JSONDecodeError as e:
-            lgr.error("Failed to load warehouse")
-            lgr.debug(e)
-        except e:
+        except Exception as e:
             lgr.critical("Unknown error")
             lgr.debug(e)
         finally:
@@ -86,13 +100,15 @@ class Warehouse:
 
     def persist_warehouse(self):
         try:
+            self.open_warehouse_file()
             self.warehouse_file.truncate(0)
-            self.warehouse_file.write(dumps(self.warehouse))
-            self.warehouse_file.flush()
-            os.fsync(self.warehouse_file.fileno())
-            lgr.debug(f"saved to: {self.config.warehouse_file}")
+            dump = dumps(self.warehouse)
+            self.warehouse_file.write(dump)
+            self.warehouse_file.close()
+            lgr.debug(f"saved to: {self.config['warehouse_file']}")
         except Exception as e:
             lgr.critical("Error while saving the warehouse")
+            lgr.debug(dump)
             lgr.debug(e)
 
     def listen_and_serve(self):
@@ -120,7 +136,7 @@ class Warehouse:
             None if no such item was found
         """
         lgr.debug(f"Get status of {item=}")
-        return deepcopy(self.items.get(item, default=None))
+        return deepcopy(self.items.get(item, None))
 
     def get_estimate(self, item: str, qty: int) -> float:
         """
@@ -128,47 +144,48 @@ class Warehouse:
             float: price of buying the product in desired quantity
             -1: if there is not enough of the product for the desired quantity
         """
-        item_stats = self.items.get(item, default=None)
-        if item is None:
+        item_stats = self.items.get(item, None)
+        if item_stats is None:
             return -1
-        price = 0
-        for v in item_stats["stock"].values():
+        cost = 0
+        for v in item_stats["stock"]:
             available = v["in_stock"]
             price = v["price"]
-            if qty > available:
-                qty -= available
-                price += available * price
             if qty < available:
-                return qty * price
+                return cost + qty * price
+
+            # qty >= available
+            qty -= available
+            cost += available * price
+                
             if qty == 0:
-                return price
+                return cost
         return -1
 
     def buy(self, item: str, qty: int) -> float:
         """
         returns:
             float: price of buying the product in the desired quantity
-            -1: if there is not enough of the product for the desired quantity
+            -1: if there is not enough of the product for the desired quantity (or there is no such product)
         """
-        price = self.get_estimate(item, qty)
-        if price == -1:
+        cost = self.get_estimate(item, qty)
+        if cost == -1:
             # not enough of the item to buy
+            # or the item does not exist
             return -1
 
         # enough of the item
         stock = self.items[item]["stock"]
         while qty > 0:
             available = stock[0]["in_stock"]
-            price = stock[0]["price"]
-            if qty >= available:
-                qty -= available
-                price += available * price
-                stock.pop(0)
             if qty < available:
                 stock[0]["in_stock"] -= qty
-                return qty * price
+                return cost
+            if qty >= available:
+                qty -= available
+                stock.pop(0)
             if qty == 0:
-                return price
+                return cost
 
         self.persist_warehouse()
 
