@@ -24,9 +24,6 @@ class Warehouse:
         self.load_data()
 
 
-    def __del__(self):
-        self.close()
-
     def load_config(self):
         """load config from src/config/{config_file}.json, parse it and set to self.config"""
         file_path = (CONFIG_DIR / self.config_file_name).resolve()
@@ -174,20 +171,25 @@ class Warehouse:
             # or the item does not exist
             return -1
 
+        lgr.debug(self.warehouse)
+
         # enough of the item
         stock = self.items[item]["stock"]
         while qty > 0:
             available = stock[0]["in_stock"]
             if qty < available:
                 stock[0]["in_stock"] -= qty
-                return cost
+                break
             if qty >= available:
                 qty -= available
                 stock.pop(0)
             if qty == 0:
-                return cost
+                break
+
+        lgr.debug(self.warehouse)
 
         self.persist_warehouse()
+        return cost
 
     def add_product(self, item: str, qty: int, price: float) -> None:
         """
