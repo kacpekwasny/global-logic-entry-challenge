@@ -68,8 +68,14 @@ Two REST API servers, for the shop, and for the warehouse, each one with an REST
 The warehouse
 
 
-<br>
-<br>
+## &nbsp; What has been done up to this commit:
+ - cli
+   - status
+   - cost estimation
+   - buying
+   - adding products
+ - unit tests
+
 <br>
 
 ##  &nbsp; The task:
@@ -115,3 +121,5 @@ README.md file with instructions about how to run the project.
  - Packaging the project (**setup.py** script) with instructions on how to do that,
  - Docker image and instruction on how to run the application using docker image,
  - Using GitHub Actions - https://docs.github.com/en/actions/quickstart.
+
+
