@@ -51,6 +51,7 @@ def make_parser() -> argparse.ArgumentParser:
     for parser in [shop_p, warehouse_p]:
         action_sp = parser.add_subparsers(
             help="chose command to be executed by the chosen place.", dest="action")
+        # I need to access this parser below in order to add a parser to it
         parser.action_subparser = action_sp
         action_sp.required = True
 
